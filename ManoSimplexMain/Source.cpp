@@ -175,6 +175,13 @@ struct Mat {
 
 struct SimplexTable {
 	vector<vector<Frac>> v;
+	vector<int> basis;
+
+	void print_basis() {
+		cout << "Basis: ";
+		for (auto el : basis) cout << el << ' ';
+		cout << endl;
+	}
 
 	void print() {
 		cout << "----------- Simplex table ----------------" << endl;
@@ -185,6 +192,7 @@ struct SimplexTable {
 			}
 			cout << endl;
 		}
+		print_basis();
 		cout << "------------------------------------------" << endl;
 		cout << endl;
 	}
@@ -192,6 +200,8 @@ struct SimplexTable {
 	SimplexTable(int n, int m, vector<Frac> vf, const Mat &mat, const vector<int> &cols) {
 		n++; m++;
 		v.assign(m, vector<Frac>(n, 0));
+		basis = cols;
+
 		for (int i = 0; i < mat.v.size(); ++i) {
 			for (int j = 0; j < mat.v[i].size(); ++j) {
 				int nj = (j + 1) % n;
@@ -250,6 +260,8 @@ struct SimplexTable {
 			}
 			if (-1 == bCol) break;
 
+			basis[bRow - 1] = bCol - 1;
+
 			for (int r = 0; r < v.size(); ++r) {
 				if (r == bRow) {
 					v[r] = vmul(v[r], v[bRow][bCol].rev());
@@ -268,6 +280,20 @@ struct SimplexTable {
 			cout << "Have answer:" << endl;
 			cout << "w = ";
 			res.print();
+			cout << endl;
+			cout << "Basis: ";
+			for (auto el : basis) cout << el << ' ';
+			cout << endl;
+			cout << "Solution: ( ";
+			vector<Frac> ans(v[0].size() - 1);
+			for (int i = 0; i < basis.size(); ++i) {
+				ans[basis[i]] = v[i + 1][0];
+			}
+			for (int i = 0; i < ans.size(); ++i) {
+				ans[i].print();
+				if (i < int(ans.size()) - 1) cout << ", ";
+			}
+			cout << " )";
 			cout << endl;
 		}
 		else {

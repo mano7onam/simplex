@@ -435,12 +435,12 @@ void solve() {
 			v[i][j].read();
 		}
 	}
-	vector<int> basis(m);
+	/*vector<int> basis(m);
 	for (int i = 0; i < m; ++i) {
 		cin >> basis[i];
-	}
+	}*/
 
-	LPP lpp(v, vf, basis);
+	LPP lpp(v, vf/*, basis*/);
 	if (lpp.isInCorrectBasis()) {
 		SimplexTable st(lpp);
 		st.doSimplexMethod();
@@ -462,7 +462,7 @@ void solve() {
 
 		auto mat = subst.getMatrix();
 		int sz = int(mat.v[0].size());
-		basis = subst.getBasisIndices();
+		auto basis = subst.getBasisIndices();
 		for (int row = 0; row < basis.size(); ++row) {
 			int b = basis[row];
 			if (b == sz - 2) {

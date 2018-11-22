@@ -121,6 +121,13 @@
     <Text Include="input.txt" />
     <Text Include="output.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Fraction.h" />
+    <ClInclude Include="Globals.h" />
+    <ClInclude Include="LinearProgrammingProblem.h" />
+    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="SimplexMethod.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

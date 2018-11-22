@@ -23,4 +23,21 @@
     <Text Include="input.txt" />
     <Text Include="output.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Matrix.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Fraction.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Globals.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimplexMethod.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LinearProgrammingProblem.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

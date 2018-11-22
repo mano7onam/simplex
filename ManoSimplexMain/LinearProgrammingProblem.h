@@ -84,8 +84,112 @@ struct CanonicalLPP {
 
 };
 
+enum OptType {
+	OPTMIN = 0, OPTMAX = 1
+};
+OptType getDualOptType(OptType cond) {
+	return (cond == OPTMIN ? OPTMAX : OPTMIN);
+}
+
+enum ConditionType {
+	GOREQ = 0, LOREQ = 1, EQUALITY = 2
+};
+ConditionType getDualCondition(ConditionType cond) {
+	if (cond == GOREQ) {
+		return LOREQ;
+	}
+	else if (cond == LOREQ) {
+		return GOREQ;
+	}
+	return EQUALITY;
+}
+ConditionType getConditionBy(OptType opt, bool mustBePositive) {
+	if (mustBePositive) {
+		return (opt == OPTMIN ? GOREQ : LOREQ);
+	}
+	return EQUALITY;
+}
+
+
 struct CommonLPP {
+	OptType optType;
 	Mat mat;
 	vector<Frac> vf;
+	vector<ConditionType> conditions;
+	vector<bool> mustBePositive;
 
+	CommonLPP() : mat({}) {}
+
+	void read() {
+		int n, m, k;
+		cin >> n >> m >> k;
+
+		mat.v.assign(m, vector<Frac>(n, 0));
+		conditions.resize(m);
+		mustBePositive.assign(n, false);
+
+		string soptType; 
+		cin >> soptType; 
+		if (soptType == "min") optType = OPTMIN;
+		else if (soptType == "max") optType = OPTMAX;
+		else assert(false);
+
+		vf.resize(n + 1);
+		for (int i = 0; i < n; ++i) {
+			vf[i].read();
+		}
+		for (int i = 0; i < m; ++i) {
+			for (int j = 0; j < n; ++j) {
+				mat.v[i][j].read();
+			}
+			string scondType;
+			cin >> scondType;
+			if (scondType == ">=") conditions[i] = GOREQ;
+			else if (scondType == "<=") conditions[i] = LOREQ;
+			else if (scondType == "=") conditions[i] = EQUALITY;
+			else assert(false);
+
+			mat.v[i][n].read();
+
+			if (optType == OPTMIN && conditions[i] == LOREQ || optType == OPTMAX && conditions[i] == GOREQ) {
+				conditions[i] = getDualCondition(conditions[i]);
+				for (int j = 0; j <= n; ++j) {
+					mat.v[i][j] = mat.v[i][j] * -1;
+				}
+			}
+		}
+
+		for (int i = 0; i < k; ++i) {
+			int id;
+			cin >> id;
+			mustBePositive[id] = true;
+		}
+	}
+
+	CommonLPP getDual() {
+		CommonLPP res;
+		res.mat.v.assign(mat.getN(), vector<Frac>(mat.getM() + 1, 0));
+		res.optType = getDualOptType(optType);
+		
+		res.vf.assign(mat.getM() + 1, 0);
+		for (int i = 0; i < mat.getM(); ++i) {
+			res.vf[i] = mat.v[i].back();
+		}
+		res.vf.back() = vf.back();
+		
+		for (int i = 0; i < mat.getN(); ++i) {
+			for (int j = 0; j < mat.getM(); ++j) {
+				res.mat.v[i][j] = mat.v[j][i];
+			}
+			res.mat.v[i].back() = vf[i];
+			res.conditions[i] = getConditionBy(res.optType, mustBePositive[i]);
+		}
+
+		res.mustBePositive.assign(mat.getM(), false);
+		for (int i = 0; i < res.mustBePositive.size(); ++i) {
+			res.mustBePositive[i] = (conditions[i] != EQUALITY);
+		}
+
+		return res;
+	}
 };

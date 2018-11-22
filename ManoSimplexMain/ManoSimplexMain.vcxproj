@@ -122,6 +122,7 @@
     <Text Include="output.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DualProblemFinder.h" />
     <ClInclude Include="Fraction.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="LinearProgrammingProblem.h" />

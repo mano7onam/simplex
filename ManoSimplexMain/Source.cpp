@@ -7,7 +7,7 @@ int main() {
 	freopen("input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 
-	readAndSolveLinearProgrammingProblemCanonical(false);
+	//readAndSolveLinearProgrammingProblemCanonical(false);
 
 	return 0;
 }

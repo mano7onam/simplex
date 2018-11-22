@@ -32,6 +32,14 @@ struct Mat {
 
 	Mat(const vector<vector<Frac>> &v) : v(v) {}
 
+	int getN() {
+		return v[0].size() - 1;
+	}
+
+	int getM() {
+		return v.size();
+	}
+
 	void print() {
 		cout << "---------- Matrix ---------------" << endl;
 		for (int i = 0; i < v.size(); ++i) {

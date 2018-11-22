@@ -77,6 +77,10 @@ struct Frac {
 		}
 	}
 
+	void printA() {
+		cout << a;
+	}
+
 	void read2() {
 		cin >> a >> b;
 	}

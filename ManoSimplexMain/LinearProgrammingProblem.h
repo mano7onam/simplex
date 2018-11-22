@@ -90,18 +90,34 @@ enum OptType {
 OptType getDualOptType(OptType cond) {
 	return (cond == OPTMIN ? OPTMAX : OPTMIN);
 }
+OptType getOptTypeFromString(string sOpt) {
+	if (sOpt == "min") return OPTMIN;
+	else if (sOpt == "max") return OPTMAX;
+	else assert(false);
+}
+string optTypeToString(OptType optType) {
+	switch (optType) {
+	case OPTMIN:
+		return "min";
+	case OPTMAX:
+		return "max";
+	default:
+		assert(false);
+	}
+}
 
 enum ConditionType {
 	GOREQ = 0, LOREQ = 1, EQUALITY = 2
 };
 ConditionType getDualCondition(ConditionType cond) {
-	if (cond == GOREQ) {
+	switch (cond) {
+	case GOREQ:
 		return LOREQ;
-	}
-	else if (cond == LOREQ) {
+	case LOREQ:
 		return GOREQ;
+	default:
+		return EQUALITY;
 	}
-	return EQUALITY;
 }
 ConditionType getConditionBy(OptType opt, bool mustBePositive) {
 	if (mustBePositive) {
@@ -109,7 +125,24 @@ ConditionType getConditionBy(OptType opt, bool mustBePositive) {
 	}
 	return EQUALITY;
 }
-
+ConditionType getConditionFromString(string scond) {
+	if (scond == ">=") return GOREQ;
+	else if (scond == "<=") return LOREQ;
+	else if (scond  == "=") return EQUALITY;
+	else assert(false);
+}
+string conditionTypeToString(ConditionType condType) {
+	switch (condType) {
+	case GOREQ:
+		return ">=";
+	case LOREQ:
+		return "<=";
+	case EQUALITY:
+		return "=";
+	default:
+		assert(false);
+	}
+}
 
 struct CommonLPP {
 	OptType optType;
@@ -124,18 +157,16 @@ struct CommonLPP {
 		int n, m, k;
 		cin >> n >> m >> k;
 
-		mat.v.assign(m, vector<Frac>(n, 0));
+		mat.v.assign(m, vector<Frac>(n + 1, 0));
 		conditions.resize(m);
 		mustBePositive.assign(n, false);
 
 		string soptType; 
 		cin >> soptType; 
-		if (soptType == "min") optType = OPTMIN;
-		else if (soptType == "max") optType = OPTMAX;
-		else assert(false);
+		optType = getOptTypeFromString(soptType);
 
 		vf.resize(n + 1);
-		for (int i = 0; i < n; ++i) {
+		for (int i = 0; i <= n; ++i) {
 			vf[i].read();
 		}
 		for (int i = 0; i < m; ++i) {
@@ -144,10 +175,7 @@ struct CommonLPP {
 			}
 			string scondType;
 			cin >> scondType;
-			if (scondType == ">=") conditions[i] = GOREQ;
-			else if (scondType == "<=") conditions[i] = LOREQ;
-			else if (scondType == "=") conditions[i] = EQUALITY;
-			else assert(false);
+			conditions[i] = getConditionFromString(scondType);
 
 			mat.v[i][n].read();
 
@@ -177,6 +205,7 @@ struct CommonLPP {
 		}
 		res.vf.back() = vf.back();
 		
+		res.conditions.resize(mat.getN());
 		for (int i = 0; i < mat.getN(); ++i) {
 			for (int j = 0; j < mat.getM(); ++j) {
 				res.mat.v[i][j] = mat.v[j][i];
@@ -191,5 +220,31 @@ struct CommonLPP {
 		}
 
 		return res;
+	}
+
+	void print() {
+		int n = int(mat.v[0].size()) - 1;
+		int m = mat.v.size();
+		int k = 0;
+		for (int el : mustBePositive) k += el;
+		cout << n << ' ' << m << ' ' << k << endl;
+		cout << optTypeToString(optType) << endl;
+		for (auto el : vf) {
+			el.printA();
+			cout << ' ';
+		}
+		cout << endl;
+		for (int i = 0; i < m; ++i) {
+			for (int j = 0; j < n; ++j) {
+				mat.v[i][j].printA();
+				cout << ' ';
+			}
+			cout << conditionTypeToString(conditions[i]) << ' ';
+			mat.v[i].back().printA();
+			cout << endl;
+		}
+		for (int i = 0; i < mustBePositive.size(); ++i) {
+			if (mustBePositive[i]) cout << i << ' ';
+		}
 	}
 };
